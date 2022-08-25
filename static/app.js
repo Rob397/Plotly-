@@ -1,64 +1,103 @@
-// Use the D3 library to read in samples.json.
-
-// Create a horizontal bar chart with a dropdown menu to display the top 10 OTUs found in that individual.
-
-// Use sample_values as the values for the bar chart.
-
-// Use otu_ids as the labels for the bar chart.
 
 // Use otu_labels as the hovertext for the chart.
 
+// so your next steps would be creating the init function. then read the samples.json in that 
+// function and then get the first sample name and then pass it into your buildData function so the filter in your 
+// buildDATA function can use that sample name and put it on the webpage
 
-function BuildDATA(sample) {
-   
-    // Use `d3.json` to fetch the metadata for a sample
-    var url = "../samples.json";
 
-    // C:\Users\mr-ma\Documents\GitHub\Plotly-\samples.json
-    
-    d3.json(url).then((data) => {
+
+
+function init() {
+  // Select the dropdown element
+  var selector = d3.select("#selDataset");
   
-      let metadata = data.metadata;
-    
-      // let id = metadata.id;
-      // let ethnicity = metadata.ethnicity;
-      // let gender =metadata.gender;
-      // let age = metadata.age;
-      // let location =metadata.location;
-      // let bbtype = metadata.bbtype;
-      // let wfreq = metadata.wfreq;
+  // Populate the dropdown with subject ID's from the list of sample Names
+    d3.json("../samples.json").then((data) => {
+      // let metadata = data.metadata; 
+      // for (var i=0; i<metadata.length; i++){
 
-      let resultArray = metadata.filter(object => object.id == data);
-      let result = resultArray[0]
-      console.log(result)
+      //   selector.append("option").property("value",metadata[i].id).text(metadata[i].id)
+      // }  
+    var sampleNames = data.names;
+    sampleNames.forEach((sample) => {
+     selector
+       .append("option")
+       .text(sample)
+       .property("value", sample);
+   });
+   // Use the first sample from the list to build the initial plots
+   var firstSample = sampleNames[0];
+   buildCharts(firstSample);
+   buildMetadata(firstSample);
+ });
+}
+init();
+function optionChanged(newsample){
+// console.log(a)
+    buildMetadata(newsample);
+    buildCharts(newsample);
+}
 
-      // Use d3 to select the panel 
-      var metaPanel = d3.select("#sample-metadata");
-  
-      // clear any existing metadata
-      metaPanel.html("");
-  
-      // Use `Object.entries` to add each key and value pair to the panel
-      // Inside the loop, you will need to use d3 to 
-      // append new tags for each key-value in the metadata.
-      Object.entries(result).forEach(function ([key, value]) {
-        var row = metaPanel.append("panel-body");
-        row.text(`${key}: ${value} \n`);
-      });
+
+function buildMetadata(sample) {
+  d3.json("../samples.json").then((data) => {
+    var metadata = data.metadata;
+    // Filter the data for the object with the desired sample number
+    var resultArray = metadata.filter(sampleObj => sampleObj.id == sample);
+    var result = resultArray[0];
+    // Use d3 to select the panel with id of #sample-metadata
+    var PANEL = d3.select("#sample-metadata");
+    // Use `.html("") to clear any existing metadata
+    PANEL.html("");
+    // Use Object.entries to add each key and value pair to the panel
+    // Inside the loop, you will need to use d3 to append new
+    // tags for each key-value in the metadata.
+    Object.entries(result).forEach(([key, value]) => {
+      PANEL.append("h6").text(`${key.toUpperCase()}: ${value}`);
     });
-  }
-
-
-// #need to naviate into the json file before doing anything
-  
+  });
+ }
 
 
 
-//   function buildCharts(sample) {
+function buildCharts(sample) {
+  d3.json("samples.json").then((data) => {
+    var samples = data.samples;
+    var resultArray = samples.filter(sampleObj => sampleObj.id == sample);
+    //   Create a variable that holds the first sample in the array.
+    var result = resultArray[0];
+    // Create variables that hold the otu_ids, otu_labels, and sample_values.
+    var otu_ids = result.otu_ids;
+    var otu_labels = result.otu_labels;
+    var sample_values = result.sample_values;
+    // Create the yticks for the bar chart.
+    //  so the otu_ids with the most bacteria are last.
+    var yticks = otu_ids.slice(0, 10).map(otuID => `OTU ${otuID}`).reverse();
+    // Create the trace for the bar chart.
+    var barData = [
+      {
+        y: yticks,
+        x: sample_values.slice(0, 10).reverse(),
+        text: otu_labels.slice(0, 10).reverse(),
+        type: "bar",
+        orientation: "h",
+      }
+    ];
+    var barLayout = {
+      title: "Top 10 Bacteria Cultures Found",
+      margin: { t: 30, l: 150 }
+    };
+    Plotly.newPlot("bar", barData, barLayout);
+  });
+ }
+
+
+// function buildCharts() {
 
 //     // `d3.json` to fetch the sample data for the plots
-//     var url = "../samples.json";
-//     d3.json(url).then(function(data) {
+    
+//     d3.json("../samples.json").then((data) => {
   
 //       // Bar Chart using the sample data
 //       var x_values = data.otu_ids;
@@ -66,7 +105,19 @@ function BuildDATA(sample) {
 //       var m_size = data.sample_values;
 //       var m_colors = data.otu_ids; 
 //       var t_values = data.otu_labels;
+      
+      
+//       // How do I get the  sample_values as the values for the bar chart.????
+      
+//       // Use otu_ids as the labels for the bar chart.
   
+//       // Use otu_labels as the hovertext for the chart.
+//       // for (var i=0; i<metadata.length; i++){
+
+//       //   selector.append("option").property("value",metadata[i].id).text(metadata[i].id)
+//       // }  
+
+
 //       var trace1 = {
 //         x: x_values,
 //         y: y_values,
@@ -89,10 +140,12 @@ function BuildDATA(sample) {
 //       Plotly.newPlot('bar', traceData, layout);
 
     
-//   })
-// }
+//     })
+  
+// };
 
-
+// buildCharts();
+// BuildDATA();
 
 
 
@@ -100,11 +153,9 @@ function BuildDATA(sample) {
 // let resultArray = samples.filter(sampleObj => sampleObj.id == sample);
 // let result = resultArray[0];
 
-// let otu_ids = result.otu_ids;
-// let otu_labels = result.otu_labels;
-// let sample_values = result.sample_values;
 
-// 12:23
+
+// // 12:23
 // let yticks = otu_ids.slice(0, 10).map(otuID => OTU ${otuID}).reverse()
 
 
