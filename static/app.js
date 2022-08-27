@@ -68,6 +68,7 @@ function buildCharts(sample) {
     var otu_ids = result.otu_ids;
     var otu_labels = result.otu_labels;
     var sample_values = result.sample_values;
+    var wfreq = result.wfreq;
     // Create the yticks for the bar chart.
     //  so the otu_ids with the most bacteria are last.
     var yticks = otu_ids.slice(0, 10).map(otuID => `OTU ${otuID}`).reverse();
@@ -87,33 +88,70 @@ function buildCharts(sample) {
     };
     Plotly.newPlot("bar", barData, barLayout);
 
-    // var BubbleData = [
-    //   {
-    //     y: sample_values,
-    //     x: otu_ids,
-    //     text: otu_labels.slice(0, 10).reverse(),
-    //     mode: 'markers',
-    //   marker: {
-    //     size: sample_values
-    //   }
-    //   }];
+
+
+// otu_ids for the x values.
+// sample_values for the y values.
+// sample_values for the marker size.
+// otu_ids for the marker colours.
+// otu_labels for the text values
+    var BubbleData = [
+      {
+        y: sample_values,
+        x: otu_ids,
+        text: otu_labels,
+        mode: 'markers',
+      marker: {
+        size: sample_values, color:otu_ids, colorscale: "Earth"
+      }
+      }];
+
+    var layout = {
+      title: 'Bubble Chart',
+      showlegend: false,
+      height: 600,
+      width: 1200
+    };
     
-    // var data = [BubbleData];
-    // var layout = {
-    //   title: 'Bubble Chart',
-    //   showlegend: false,
-    //   height: 600,
-    //   width: 1200
-    // };
-    
-    // Plotly.newPlot("bubble", data, layout);
+    Plotly.newPlot("bubble", BubbleData, layout);
+
+    // Gauge Charts
+    //Unable to find the appropriate style
+
+    var wfreq=result.wfreq
+        
+
+    var data_gauge = [
+      {
+      domain: { x: [0, 1], y: [0, 1] },
+      value: wfreq,
+      title: {text: `Belly Button Washing Frequency`},
+      type: "indicator",
+      
+      mode: "gauge+number",
+      gauge: { axis: { range: [null, 9] },
+               steps: [
+                {range: [0, 1], color: "white"},
+                {range: [1, 2], color: "white"},
+                {range: [2, 3], color: "white"},
+                {range: [3, 4], color: "white"},
+                {range: [4, 5], color: "white"},
+                {range: [5, 6], color: "white"},
+                {range: [6, 7], color: "white"},
+                {range: [7, 8], color: "white"},
+                {range: [8, 9], color: "white"}
+              ]}
+          
+      }
+    ];
+    var layout2 = { 
+        width: 700, 
+        height: 600, 
+        margin: { t: 20, b: 40, l:100, r:100 } 
+      };
+    Plotly.newPlot("gauge", data_gauge, layout2);
+
+
+
     });
 }
-
-// Use otu_ids for the x values.
-// Use sample_values for the y values.
-// Use sample_values for the marker size.DONE
-
-// Use otu_ids for the marker colours.
-// Use otu_labels for the text values
-
