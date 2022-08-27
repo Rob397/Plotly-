@@ -1,8 +1,5 @@
 
-// Use otu_labels as the hovertext for the chart.
-
-// so your next steps would be creating the init function. then read the samples.json in that 
-// function and then get the first sample name and then pass it into your buildData function so the filter in your 
+//  function and then get the first sample name and then pass it into your buildData function so the filter in your 
 // buildDATA function can use that sample name and put it on the webpage
 
 
@@ -62,7 +59,7 @@ function buildMetadata(sample) {
 
 
 function buildCharts(sample) {
-  d3.json("samples.json").then((data) => {
+  d3.json("../samples.json").then((data) => {
     var samples = data.samples;
     var resultArray = samples.filter(sampleObj => sampleObj.id == sample);
     //   Create a variable that holds the first sample in the array.
@@ -89,99 +86,34 @@ function buildCharts(sample) {
       margin: { t: 30, l: 150 }
     };
     Plotly.newPlot("bar", barData, barLayout);
-  });
- }
 
-
-// function buildCharts() {
-
-//     // `d3.json` to fetch the sample data for the plots
+    // var BubbleData = [
+    //   {
+    //     y: sample_values,
+    //     x: otu_ids,
+    //     text: otu_labels.slice(0, 10).reverse(),
+    //     mode: 'markers',
+    //   marker: {
+    //     size: sample_values
+    //   }
+    //   }];
     
-//     d3.json("../samples.json").then((data) => {
-  
-//       // Bar Chart using the sample data
-//       var x_values = data.otu_ids;
-//       var y_values = data.sample_values;
-//       var m_size = data.sample_values;
-//       var m_colors = data.otu_ids; 
-//       var t_values = data.otu_labels;
-      
-      
-//       // How do I get the  sample_values as the values for the bar chart.????
-      
-//       // Use otu_ids as the labels for the bar chart.
-  
-//       // Use otu_labels as the hovertext for the chart.
-//       // for (var i=0; i<metadata.length; i++){
-
-//       //   selector.append("option").property("value",metadata[i].id).text(metadata[i].id)
-//       // }  
-
-
-//       var trace1 = {
-//         x: x_values,
-//         y: y_values,
-//         text: t_values,
-//         type: 'bar',
-//         marker: {
-//           color: m_colors,
-//           size: m_size
-//         }, 
-//         orientation:'h',
-//       };
-      
-//       var layout = {
-//         title: "top 10 OTUs",
-//         barmode: "group"
-//       };
-
-
-//       var traceData = [trace1];
-//       Plotly.newPlot('bar', traceData, layout);
-
+    // var data = [BubbleData];
+    // var layout = {
+    //   title: 'Bubble Chart',
+    //   showlegend: false,
+    //   height: 600,
+    //   width: 1200
+    // };
     
-//     })
-  
-// };
+    // Plotly.newPlot("bubble", data, layout);
+    });
+}
 
-// buildCharts();
-// BuildDATA();
-
-
-
-// let samples = data.samples;
-// let resultArray = samples.filter(sampleObj => sampleObj.id == sample);
-// let result = resultArray[0];
-
-
-
-// // 12:23
-// let yticks = otu_ids.slice(0, 10).map(otuID => OTU ${otuID}).reverse()
-
-
-
-
-
-
-
-
-
-// Create a bubble chart that displays each sample.
 // Use otu_ids for the x values.
-
-// Use sample_values for the y values
-
-// Use sample_values for the marker size.
+// Use sample_values for the y values.
+// Use sample_values for the marker size.DONE
 
 // Use otu_ids for the marker colours.
-
-// Use otu_labels for the text values.
-
-
-
-// 4. Display the sample metadata, i.e., an individual's demographic information
-
-// 5. Display each key-value pair from the metadata JSON object somewhere on the page.
-
-// 6. Update all of the plots any time that a new sample is selected. -->
+// Use otu_labels for the text values
 
